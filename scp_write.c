@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     LIBSSH2_CHANNEL *channel;
     const char *username="jabouzic";
     const char *password="7024043";
-    const char *loclfile="ssh2";
+    const char *loclfile="Athan.tar.gz";
     const char *scppath="/home/jabouzic/test.c";
     FILE *local;
     int rc;
@@ -164,6 +164,10 @@ int main(int argc, char *argv[])
     channel = libssh2_scp_send(session, scppath, fileinfo.st_mode & 0777,
 
                                (unsigned long)fileinfo.st_size);
+    int file_size = (unsigned long)fileinfo.st_size;
+    /*int file_parts = file_size / 1024 + 1;
+    float percent = file_parts / 100;*/
+    int progress = 0;
     printf("size : %lu  \n ", (unsigned long)fileinfo.st_size);
     if (!channel) {
         char *errmsg;
@@ -195,7 +199,9 @@ int main(int argc, char *argv[])
                 ptr += rc;
                 nread -= rc;                
             }
-            printf("rc : %d  \n ", rc);
+            
+            progress += rc;
+            printf("%f pct \n ", (float)progress / (float)file_size);
         } while (nread);
  
     } while (1);
