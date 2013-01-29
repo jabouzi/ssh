@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
     LIBSSH2_CHANNEL *channel;
     const char *username="jabouzic";
     const char *password="7024043";
-    const char *loclfile="Athan.tar.gz";
+    const char *loclfile="athan1.mp3";
     const char *scppath="/home/jabouzic/test.c";
     FILE *local;
     int rc;
-    char mem[1024];
+    char mem[8001024];
     size_t nread;
     char *ptr;
     struct stat fileinfo;
@@ -85,10 +85,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Can't open local file %s\n", loclfile);
         return -1;
     }
-    
-    /*fseek(fp, 0L, SEEK_END);
-    sz = ftell(fp);
-    fseek(fp, 0L, SEEK_SET);*/
  
     stat(loclfile, &fileinfo);
  
@@ -181,6 +177,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "SCP session waiting to send file\n");
     do {
         nread = fread(mem, 1, sizeof(mem), local);
+        printf("nread : %d \n", (int)nread);
         if (nread <= 0) {
             /* end of file */ 
             break;
@@ -190,6 +187,7 @@ int main(int argc, char *argv[])
         do {
             /* write the same data over and over, until error or completion */ 
             rc = libssh2_channel_write(channel, ptr, nread);
+            printf("rc : %d \n", rc);
             if (rc < 0) {
                 fprintf(stderr, "ERROR %d\n", rc);
                 break;
@@ -201,7 +199,7 @@ int main(int argc, char *argv[])
             }
             
             progress += rc;
-            printf("%f pct \n ", (float)progress / (float)file_size);
+            printf("%f,0 pct \n ", ((float)progress / (float)file_size) * 100);
         } while (nread);
  
     } while (1);
